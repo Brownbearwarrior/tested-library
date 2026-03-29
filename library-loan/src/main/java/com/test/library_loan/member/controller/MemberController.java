@@ -10,6 +10,7 @@ import com.test.library_loan.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class MemberController {
     private final MemberService memberService;
     private final LoanService loanService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     ResponseEntity<Response<MemberResponse>> createMember(@Valid @RequestBody MemberRequest memberRequest){
         return ResponseEntity.ok(
@@ -30,6 +32,7 @@ public class MemberController {
                         memberService.createMember(memberRequest)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'MEMBER')")
     @GetMapping
     ResponseEntity<Response<List<MemberResponse>>> fetchAllMember(@RequestParam(required = false) String status){
         return ResponseEntity.ok(
@@ -37,6 +40,7 @@ public class MemberController {
                         memberService.fetchAllMember(status)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'MEMBER')")
     @GetMapping("/{id}")
     ResponseEntity<Response<MemberResponse>> fetchDetailMember(@PathVariable UUID id){
         return ResponseEntity.ok(
@@ -44,6 +48,7 @@ public class MemberController {
                         memberService.fetchDetailMember(id)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'MEMBER')")
     @GetMapping("/{id}/loans")
     ResponseEntity<Response<List<LoanResponse>>> fetchAllLoans(@PathVariable UUID id){
         return ResponseEntity.ok(
@@ -51,6 +56,7 @@ public class MemberController {
                         loanService.fetchAllLoan(id, null)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     ResponseEntity<Response<MemberResponse>> updateMember(@PathVariable UUID id,
                                                       @Valid @RequestBody MemberRequest memberRequest){
@@ -59,6 +65,7 @@ public class MemberController {
                         memberService.updateMember(id, memberRequest)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     ResponseEntity<Response<String>> deleteMember(@PathVariable UUID id){
         return ResponseEntity.ok(

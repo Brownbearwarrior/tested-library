@@ -14,7 +14,7 @@ public class MemberUtils {
 
     public static Member convertMember(MemberRequest memberRequest){
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
 
         return Member.builder()
                 .name(memberRequest.name().toUpperCase())

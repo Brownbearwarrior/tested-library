@@ -8,6 +8,7 @@ import com.test.library_loan.loan.service.LoanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,18 +21,21 @@ public class LoanController {
 
     private final LoanService loanService;
 
+    @PreAuthorize("hasRole('MEMBER')")
     @PostMapping("/borrow")
     ResponseEntity<Response<LoanResponse>> borrowBook(@Valid @RequestBody LoanRequest loanRequest){
         return ResponseEntity.ok(ResponseUtils.toResponse("Success",
                 loanService.borrowBook(loanRequest)));
     }
 
+    @PreAuthorize("hasRole('MEMBER')")
     @PutMapping("/return/{id}")
     ResponseEntity<Response<LoanResponse>> returnBook(@PathVariable UUID id){
         return ResponseEntity.ok(ResponseUtils.toResponse("Success",
                 loanService.returnBook(id)));
     }
 
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'MEMBER')")
     @GetMapping()
     ResponseEntity<Response<List<LoanResponse>>> fetchAllLoans(@RequestParam(required = false) String status){
         return ResponseEntity.ok(ResponseUtils.toResponse("Success",

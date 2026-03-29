@@ -8,6 +8,7 @@ import com.test.library_loan.common.utils.ResponseUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @PostMapping
     ResponseEntity<Response<BookResponse>> createBook(@Valid @RequestBody BookRequest bookRequest){
         return ResponseEntity.ok(
@@ -27,6 +29,7 @@ public class BookController {
                         bookService.createBook(bookRequest)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'MEMBER')")
     @GetMapping
     ResponseEntity<Response<List<BookResponse>>> fetchBookList(){
         return ResponseEntity.ok(
@@ -34,6 +37,7 @@ public class BookController {
                         bookService.fetchAllBook()));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'MEMBER')")
     @GetMapping("/{id}")
     ResponseEntity<Response<BookResponse>> fetchBookDetail(@PathVariable UUID id){
         return ResponseEntity.ok(
@@ -41,6 +45,7 @@ public class BookController {
                         bookService.fetchDetailBook(id)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @PutMapping("/{id}")
     ResponseEntity<Response<BookResponse>> updateBook(@PathVariable UUID id,
                                                       @Valid @RequestBody BookRequest bookRequest){
@@ -49,6 +54,7 @@ public class BookController {
                         bookService.updateBook(id, bookRequest)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @DeleteMapping("/{id}")
     ResponseEntity<Response<String>> deleteBook(@PathVariable UUID id){
         return ResponseEntity.ok(
