@@ -81,6 +81,8 @@ public class BookServiceImpl implements BookService {
     public String deleteBook(UUID id) {
         var exist = this.fetchExistBook(id);
 
+        this.validateDelete(exist);
+
         exist.setDeleted(Boolean.TRUE);
 
         this.saveBook(exist);
@@ -96,6 +98,12 @@ public class BookServiceImpl implements BookService {
         }
 
         return book;
+    }
+
+    private void validateDelete(Book book){
+        if (book.getAvailableCopies() != book.getTotalCopies()){
+            throw new BusinessException("Book has not same available with total copies");
+        }
     }
 
     private Book saveBook(Book book){
